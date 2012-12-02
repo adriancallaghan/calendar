@@ -1,0 +1,61 @@
+
+
+
+<h1><?php echo $this->current_date; ?></h1>
+<h2>&pound;<?php echo $this->statement->getBalance(); ?></h2>
+        
+
+<table border="2" width="100%">
+
+    <tr>
+        <th>Date</th>
+        <th>Amount</th>
+        <th>Transactions</th>
+    </tr>
+    
+    <?php foreach ($this->statement  AS $activity) : ?>
+
+    <tr>
+        <td><?php echo $activity->date; ?></td>
+        <td><?php echo $activity->balance; ?></td>
+        <td>
+            <?php if (count($activity->transactions)>0) :  ?>
+                <table border="0">
+                    <tr>
+                        <th>Name</th>
+                        <th>Amount</th>
+                        <th>Tags</th>
+                        <th>Categories</th>
+                    </tr>
+                <?php  foreach ($activity->transactions AS $transaction) : ?>
+                    <tr>
+                        <td><?php echo $transaction->name; ?></td>
+                        <td><?php echo $transaction->amount; ?></td>
+                        <td>
+                            <?php
+                             if (count($transaction->tags)>0){
+                                foreach ($transaction->tags AS $tag){
+                                    echo $tag->tag_name.'<br />';
+                                }
+                            }?>
+                        </td>
+                        <td>
+                            <?php
+                            if (count($transaction->categories)>0){
+
+                                foreach ($transaction->categories AS $category){
+                                    echo $category->category_name.'<br />';
+                                }
+
+                            }?>
+                        </td>
+                    </tr>
+            <?php endforeach; ?>
+            </table>
+            
+            <?php endif; ?>
+
+    </tr>
+    <?php endforeach; ?>
+                
+</table>
