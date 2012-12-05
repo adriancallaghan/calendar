@@ -111,11 +111,14 @@ class Application_Model_Account_Categorys implements Iterator{
     
     public static function setCategoriesByTransactionId($transactionId, Application_Model_Account_Categorys $categories){
         
+        $catTaxObj = new Application_Model_DbTable_CategoryTaxonomy();
+        
+        // clear existing categories
+        $catTaxObj->delete(array('transaction_id = ?'=>$transactionId));
+        
         if (!count($categories)>0){
             return;
         }
-        
-        $catTaxObj = new Application_Model_DbTable_CategoryTaxonomy();
         
         foreach ($categories AS $cat){
             $catTaxObj->insert(array('transaction_id'=>$transactionId,'category_id'=>$cat->category_id));

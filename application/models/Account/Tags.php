@@ -112,17 +112,21 @@ class Application_Model_Account_Tags implements Iterator{
     
     public static function setTagsByTransactionId($transactionId, Application_Model_Account_Tags $tags){
         
+        $tagTaxObj = new Application_Model_DbTable_TagTaxonomy();
+        
+        // clear existing tags
+        $tagTaxObj->delete(array('transaction_id = ?'=>$transactionId));
+        
         if (!count($tags)>0){
             return;
         }
-        
-        $tagTaxObj = new Application_Model_DbTable_TagTaxonomy();
         
         foreach ($tags AS $tag){
             $tagTaxObj->insert(array('transaction_id'=>$transactionId,'tag_id'=>$tag->tag_id));
         }
         
     }
+    
     
     
 }
