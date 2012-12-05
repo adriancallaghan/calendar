@@ -21,11 +21,6 @@ class Application_Form_Transaction extends Zend_Form
             'filters'    => array('StringTrim')
         ));
         
-        $this->addElement('text', 'id', array(
-            'hidden'      => true,
-            'required'   => true
-        ));
-        
         $this->addElement('submit', 'save', array(
             'ignore'     => true
         ));
@@ -38,15 +33,17 @@ class Application_Form_Transaction extends Zend_Form
             'label'      => 'Categories: '
         ));
                 
-        $this->addElement('checkbox', 'active', array(
-            'label'      => 'Active: '
+        $this->addElement('text', 'date', array(
+            'required'   => true,
+            'hidden'     => true,
+            'filters'    => array('StringTrim')
         ));
         
         /*$this->addElement('hash', 'csrf', array(
             'ignore'     => true
         ));*/
         
-
+        //$this->setAction('/ajax/savetransaction');
     }
     
     
@@ -64,36 +61,7 @@ class Application_Form_Transaction extends Zend_Form
         return $this;
     }
     
-    public function setTagsActive(Application_Model_Account_Tags $tagsObj){
-        
-        $tags = array();
-        
-        if ($tagsObj){
-            foreach($tagsObj AS $tagObj){
-                $tags[] = $tagObj->tag_id;
-            }
-        }
-        
-        $this->getElement('tags')->setValue($tags);
-        return $this;
-    }
-    
     public function setCategories(Application_Model_Account_Categorys $categoriesObj){
-        
-        $categories = array();
-        
-        if ($categoriesObj){
-            foreach($categoriesObj AS $categoryObj){
-                $categories[] = $categoryObj->category_id;
-            }
-        }
-        
-        $this->getElement('categories')->setValue($categories);
-        return $this;
-        
-      }
-    
-    public function setCategoriesActive(Application_Model_Account_Categorys $categoriesObj){
         
         $categories = array();
         
@@ -108,14 +76,24 @@ class Application_Form_Transaction extends Zend_Form
         
       }
     
+    public function setDate(Application_Model_Calendar_Date $date){
+        $this->getElement('date')->setValue($date->unix);
+        return $this;
+    }
+    
+    public function getDate(){
+        
+        
+        return Application_Model_Calendar_Dates::Date(array('unix'=>$this->getElement('date')->getValue()));
+        
+    }
+    
     public function getTransaction() {
         
         // data        
         $transactionData = array(
             'name'=>$this->getValue('name'),
             'amount'=>$this->getValue('amount'),
-            'active'=>$this->getValue('active'),
-            'id'=>$this->getValue('id'),
             'tags'=>Application_Model_Account_Tags::getTagsByIds($this->getValue('tags')),
             'categories'=>  Application_Model_Account_Categorys::getCategoriesByIds($this->getValue('categories'))
             );
@@ -124,16 +102,6 @@ class Application_Form_Transaction extends Zend_Form
         
     }
     
-    public function populateByTransaction(Application_Model_Account_Transaction $transaction) {
-        
-        $this->getElement('id')->setValue($transaction->id);
-        $this->getElement('name')->setValue($transaction->name);
-        $this->getElement('amount')->setValue($transaction->amount);
-        $this->getElement('active')->setValue($transaction->active);
-        $this->setTagsActive($transaction->tags);
-        $this->setCategoriesActive($transaction->categories);       
-        
-    }
  
 }
 

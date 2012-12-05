@@ -2,7 +2,8 @@
 
 class Application_Model_Account_Transactions implements Iterator {
    
-    protected  $_names;
+    protected $_actives;
+    protected $_names;
     protected $_amounts;
     protected $_categories;
     protected $_tags;   
@@ -61,6 +62,8 @@ class Application_Model_Account_Transactions implements Iterator {
         $transId = $this->_order[$key];
             
         $transactionObj = new Application_Model_Account_Transaction();
+        $transactionObj->id = $transId;
+        $transactionObj->active = $this->_actives[$transId];
         $transactionObj->amount = $this->_amounts[$transId];
         $transactionObj->name = $this->_names[$transId];
         $transactionObj->tags = $this->_tags[$transId];
@@ -73,6 +76,7 @@ class Application_Model_Account_Transactions implements Iterator {
     private function addTransaction(Zend_Db_Table_Row $transaction, Application_Model_Account_Categorys $categories, Application_Model_Account_Tags $tags){
         
         $this->_order[] = $transaction->id;
+        $this->_actives[$transaction->id] = $transaction->active;
         $this->_amounts[$transaction->id] = (float) $transaction->amount;
         $this->_names[$transaction->id] = (string) $transaction->name;
         $this->_categories[$transaction->id] = $categories;
@@ -101,19 +105,23 @@ class Application_Model_Account_Transactions implements Iterator {
         
     }
     
-    public static function fetchByTransactionIds(array $transactionIdIds, $onlyActive = true){
+    public static function fetchByTransactionIds(array $transactionIds, $onlyActive = true){
+        
+        /*
+         * returns this object, with a collection of transactions within it
+         */
         
          $thisObj = new Application_Model_Account_Transactions();
         
-         if ($transactionIdIds){
+         if ($transactionIds){
             
             $transactionIdObj = new Application_Model_DbTable_Transactions();           
 
-            foreach ($transactionIdIds AS $transactionId){
+            foreach ($transactionIds AS $transactionId){
 
                 $transactionDetails = $transactionIdObj->fetchTransaction($transactionId);
                 
-                if (!$onlyActive || $transactionDetails->active){
+                if ($transactionDetails && (!$onlyActive || $transactionDetails->active)){
                     $categories = Application_Model_Account_Categorys::getCategoriesByTransactionId($transactionId);
                     $tags = Application_Model_Account_Tags::getTagsByTransactionId($transactionId);
                     $thisObj->addTransaction($transactionDetails, $categories, $tags);
@@ -127,13 +135,78 @@ class Application_Model_Account_Transactions implements Iterator {
         
     }
     
-    public static function updateTransaction(Application_Model_Account_Transaction $transaction){
+    public static function fetchByTransactionId($transactionId, $onlyActive = true){
+        
+        /*
+         * Returns a single transaction
+         */    
+        
+       $transactionIdObj = new Application_Model_DbTable_Transactions();           
+
+        $transactionDetails = $transactionIdObj->fetchTransaction($transactionId);
+
+        if ($transactionDetails && (!$onlyActive || $transactionDetails->active)){
+
+
+            return new Application_Model_Account_Transaction(
+                    array(
+                        'name'=>$transactionDetails->name,
+                        'amount'=>$transactionDetails->amount,
+                        'id'=>$transactionDetails->id,
+                        'active'=>$transactionDetails->active,
+                        'tags'=>Application_Model_Account_Tags::getTagsByTransactionId($transactionDetails->id),
+                        'categories'=>Application_Model_Account_Categorys::getCategoriesByTransactionId($transactionDetails->id)
+                    )
+                );
+
+        }
         
     }
     
-    public function moveTransaction(Application_Model_Account_Transaction $transaction, Application_Model_Calendar_Date $from, Application_Model_Calendar_Date $to){
         
-        $dateTaxObj = new Application_Model_DbTable_DateTaxonomy();
+    
+    public static function updateTransaction(Application_Model_Account_Transaction $transaction){
+        
+        if (!self::fetchByTransactionId($transaction->id, false)){
+            throw new Exception('Invalid transaction id');
+        }
+        
+        
+        $transactionObj = new Application_Model_DbTable_Transactions();
+            
+        /*
+         * Saves a transaction to a date
+         */
+                           
+        // duplicate the transaction
+        $transactionObj->update(
+                array(
+                    'name'=>$transaction->name,
+                    'amount'=>$transaction->amount,
+                    'active'=>$transaction->active
+                    ),
+                array('id = ?'=>$transaction->id)
+                );
+        
+        
+        /*
+         * Add tags and categories etc
+         */
+        if ($transaction->tags){
+            Application_Model_Account_Tags::setTagsByTransactionId($transaction->id, $transaction->tags);
+        }
+        if ($transaction->categories){
+            Application_Model_Account_Categorys::setCategoriesByTransactionId($transaction->id, $transaction->categories);
+        }
+        
+        return true;
+    
+        
+    }
+    
+    public function moveTransaction(Application_Model_Account_Transaction $transaction, Application_Model_Calendar_Date $newDate){
+        
+        /*$dateTaxObj = new Application_Model_DbTable_DateTaxonomy();
         $datesObj = new Application_Model_DbTable_Dates();
         $dateKey = $datesObj->getDbKey($from);
          
@@ -141,7 +214,7 @@ class Application_Model_Account_Transactions implements Iterator {
             
             //$dateTaxObj->findId($dateKey, $transactionId);
             //$dateTaxObj->insert(array('transaction_id'=>$transactionId,'date_id'=>$dateDb->date_id));
-        }
+        }*/
         
     }
     

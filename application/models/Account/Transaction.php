@@ -4,14 +4,32 @@
 class Application_Model_Account_Transaction {
     
     
-       use Application_Model_Trait_Readonly;
+    use Application_Model_Trait_Readonly;
     
+    protected $_id;
+    protected $_active;
     protected $_name;
     protected $_amount;
     protected $_tags;
     protected $_categories;
 
 
+    public function setId($id = null){
+        
+        $this->_id = $id;
+        return $this;
+        
+    }
+    
+    public function getId(){
+        
+        if (!isset($this->_id)){
+            $this->setId();
+        }
+        return $this->_id;
+        
+    }
+    
     public function setName($name = null){
         
         $this->_name = $name;
@@ -25,6 +43,22 @@ class Application_Model_Account_Transaction {
             $this->setName();
         }
         return $this->_name;
+        
+    }
+    
+     public function setActive($active = null){
+        
+        $this->_active = $active;
+        return $this;
+        
+    }
+    
+    public function getActive(){
+        
+        if (!isset($this->_active)){
+            $this->setActive();
+        }
+        return $this->_active;
         
     }
     

@@ -11,7 +11,7 @@ class TestController extends Zend_Controller_Action
     public function indexAction()
     {
         
-        
+        /*
         $dateArgs = null;
         
         $form = new Application_Form_Transaction();
@@ -22,7 +22,7 @@ class TestController extends Zend_Controller_Action
         
         
         $this->view->form = $form;
-
+*/
     }
 
 

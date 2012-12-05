@@ -9,8 +9,8 @@
 
     <tr>
         <th>Date</th>
-        <th>Amount</th>
-        <th>Transactions</th>
+        <th>Total Amount</th>
+        <th>Total Transactions</th>
     </tr>
     
     <?php foreach ($this->statement  AS $activity) : ?>
@@ -20,7 +20,7 @@
         <td><?php echo $activity->balance; ?></td>
         <td>
             <?php if (count($activity->transactions)>0) :  ?>
-                <table border="0">
+                <table border="0" cellpadding="5">
                     <tr>
                         <th>Name</th>
                         <th>Amount</th>
@@ -29,13 +29,13 @@
                     </tr>
                 <?php  foreach ($activity->transactions AS $transaction) : ?>
                     <tr>
-                        <td><?php echo $transaction->name; ?></td>
-                        <td><?php echo $transaction->amount; ?></td>
+                        <td><?php echo "<a href='/transaction/edit/{$transaction->id}/' title='Edit {$transaction->name}'>{$transaction->name}</a><br />"; ?></td>
+                        <td><?php echo "<a href='/transaction/edit/{$transaction->id}/' title='Edit {$transaction->name}'>&pound;{$transaction->amount}</a><br />"; ?></td>
                         <td>
                             <?php
                              if (count($transaction->tags)>0){
                                 foreach ($transaction->tags AS $tag){
-                                    echo $tag->tag_name.'<br />';
+                                    echo "<a href='/tag/edit/{$tag->tag_id}' title='Edit {$tag->tag_name}'>{$tag->tag_name}</a><br />";
                                 }
                             }?>
                         </td>
@@ -44,7 +44,7 @@
                             if (count($transaction->categories)>0){
 
                                 foreach ($transaction->categories AS $category){
-                                    echo $category->category_name.'<br />';
+                                    echo "<a href='/category/edit/{$category->category_id}' title='Edit {$category->category_name}'>{$category->category_name}</a><br />";
                                 }
 
                             }?>
