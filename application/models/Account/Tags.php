@@ -3,8 +3,8 @@
 
 class Application_Model_Account_Tags implements Iterator{
     
-    protected $_position;
-    protected $_tags;
+    use Application_Model_Trait_Iterable;
+
 
 
     private function __construct() {
@@ -12,51 +12,17 @@ class Application_Model_Account_Tags implements Iterator{
         $this->rewind();
     }
     
-    
-     /*
-     * Iterator related
-     */
-    
-    public function rewind() {
-
-        $this->_position = 0;
-    }
-
-    public function current() {
-
-        // main and only accessor, calls build
-        if ($this->valid()){
-
-            return $this->_tags[$this->_position];
-        }
-    }
-
-    public function key() {
-
-        return $this->_position;
-    }
-
-    public function next() {
-
-        ++$this->_position;
-    }
-
-    public function valid() {
-
-        return isset($this->_tags[$this->_position]);
-    }
-    
-    
+ 
     public function setTags(array $tags){
         
-        $this->_tags = $tags;
+        $this->setData($tags);
         return $this;
         
     }
     
     public function getTags(){
         
-        return $this->_tags;
+        return $this->getData();
     }
         
     private function setTag(Zend_Db_Table_Row $tag){

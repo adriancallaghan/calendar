@@ -3,58 +3,26 @@
 
 class Application_Model_Account_Categorys implements Iterator{
     
-    protected $_position;
-    protected $_categories;
+
+    use Application_Model_Trait_Iterable;
+    
 
 
-    private function __construct() {
+    private function __construct()
+    {     
+        $this->rewind(); // reset the pointer
         
-        $this->rewind();
     }
-    
-    
-     /*
-     * Iterator related
-     */
-    
-    public function rewind() {
-
-        $this->_position = 0;
-    }
-
-    public function current() {
-
-        // main and only accessor, calls build
-        if ($this->valid()){
-
-            return $this->_categories[$this->_position];
-        }
-    }
-
-    public function key() {
-
-        return $this->_position;
-    }
-
-    public function next() {
-
-        ++$this->_position;
-    }
-
-    public function valid() {
-
-        return isset($this->_categories[$this->_position]);
-    }
-    
+     
     public function setCategories(array $categorys){
         
-        $this->_categories = $categorys;
+        $this->setData($categorys);
         return $this;
     }
     
     public function getCategories(){
         
-        return $this->_categories;
+        return $this->getData();
     }
     
     private function setCategory(Zend_Db_Table_Row $category){

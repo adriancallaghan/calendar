@@ -7,8 +7,10 @@
 
 class Application_Model_Calendar_Dates implements Iterator {
 
-    protected $_position; // internal pointer
-    protected $_dates;  // data set returned by the object
+    
+    use Application_Model_Trait_Readonly;
+    use Application_Model_Trait_Iterable;
+        
     
     /*
      * class type
@@ -22,119 +24,19 @@ class Application_Model_Calendar_Dates implements Iterator {
         }
     }
 
-    public function __set($name, $value)
-    {
-        $method = 'set' . $name;        
-        if (method_exists($this, $method)){
-            return $this->$method($value);
-        }
-           
-        throw new Exception('Invalid Dates property');
-    }
 
-    public function __get($name)
-    {
-        
-        $method = 'get' . $name;        
-        if (method_exists($this, $method)){
-            return $this->$method();
-        }
-
-        throw new Exception('Invalid Dates property '.$method);
-        
-        
-    }
-
-    public function setOptions(array $options)
-    {
-        $methods = get_class_methods($this);
-        foreach ($options as $key => $value) {
-            $method = 'set' . ucfirst($key);
-            if (in_array($method, $methods)) {
-                $this->$method($value);
-            }
-        }
-        return $this;
-    }
-       
-    /*
-     * Iterator related
-     */
-    
-    public function rewind() {
-
-        $this->position = 0;
-    }
-
-    public function current() {
-
-        // main and only accessor, calls build
-        if ($this->valid()){
-            return $this->_dates[$this->position];
-        }
-    }
-
-    public function key() {
-
-        return $this->position;
-    }
-
-    public function next() {
-
-        ++$this->position;
-    }
-
-    public function valid() {
-
-        return isset($this->_dates[$this->position]);
-    }
-
-    
     private function setDates(array $dates = null){
         
-        $this->_dates = $dates;
+        $this->setData($dates);
         return $this;
     }
     
     public function getDates(){
         
-        return $this->_dates;
+        return $this->getData();
         
     }
-    
-    public function setPosition($position){
         
-        $this->_position = $position;
-        return $this;
-    }
-    
-    public function getPosition(){
-        
-        if (!isset($this->_position)){
-            $this->rewind();
-        }
-        return $this->_position;
-        
-    }
-    
-    public function getStart(){
-        
-        if (isset($this->dates[0])){
-            return $this->dates[0];
-        }
-        return null;
-    }
-    
-    public function getEnd(){
-
-        $count = count($this->dates)-1;
-        if ($count>0){
-            return $this->dates[$count];
-        }
-        
-        return null;
-
-    }
     
     
    

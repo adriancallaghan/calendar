@@ -3,6 +3,8 @@
 class Application_Model_Account_Date
 {
 
+    use Application_Model_Trait_Readonly;
+    
     
     protected $_balance;
     protected $_date;
@@ -23,42 +25,7 @@ class Application_Model_Account_Date
          * Object is automatically Cached afterward, because this object has a private constructor with only one entry point
          */
     }
-    
-    
-    public function __set($name, $value)
-    {
-        $method = 'set' . $name;
-        if (method_exists($this, $method)) {
-            $this->$method($value);
-            return $this;
-        }
-                
-        throw new Exception('Invalid Date property');
-        
-    }
 
-    public function __get($name)
-    {
-        
-        $method = 'get' . $name;
-        if (method_exists($this, $method)) {
-            return $this->$method();
-        }
-        
-        throw new Exception('Invalid Date property');
-    }
-    
-    public function setOptions(array $options)
-    {
-        $methods = get_class_methods($this);
-        foreach ($options as $key => $value) {
-            $method = 'set' . ucfirst($key);
-            if (in_array($method, $methods)) {
-                $this->$method($value);
-            }
-        }
-        return $this;
-    }  
 
     private function setDate(Application_Model_Calendar_Date $date){
         

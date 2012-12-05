@@ -3,6 +3,7 @@
 
 class Application_Model_Account_Statement implements Iterator{
     
+    
     protected $_position;
     protected $_dates;
     protected $_balance;
