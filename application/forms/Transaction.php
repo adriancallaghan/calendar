@@ -22,8 +22,7 @@ class Application_Form_Transaction extends Zend_Form
         ));
         
         $this->addElement('text', 'id', array(
-            'hidden'      => true,
-            'required'   => true
+            'hidden'      => true
         ));
         
         $this->addElement('submit', 'save', array(
@@ -78,7 +77,7 @@ class Application_Form_Transaction extends Zend_Form
         return $this;
     }
     
-    public function setCategories(Application_Model_Account_Categorys $categoriesObj){
+    public function setCategoriesActive(Application_Model_Account_Categorys $categoriesObj){
         
         $categories = array();
         
@@ -86,14 +85,14 @@ class Application_Form_Transaction extends Zend_Form
             foreach($categoriesObj AS $categoryObj){
                 $categories[] = $categoryObj->category_id;
             }
-        }
-        
+        } 
+
         $this->getElement('categories')->setValue($categories);
         return $this;
         
       }
     
-    public function setCategoriesActive(Application_Model_Account_Categorys $categoriesObj){
+    public function setCategories(Application_Model_Account_Categorys $categoriesObj){
         
         $categories = array();
         

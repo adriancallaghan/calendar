@@ -54,38 +54,32 @@ class TransactionController extends Zend_Controller_Action
     {
         // action body
         
-        die('BROKEN');
-        $dateArgs = null;
-        
-        $form = new Application_Form_Transaction();
+        $dateReq = $this->getRequest()->getParam('arg1');
+        $dateObj = Application_Model_Calendar_Dates::Date(array('unix'=>$dateReq));
+        if ($dateObj->unix !== $dateReq){
+            throw new Exception('Invalid date specified');
+        }
 
-        $form->setTags(Application_Model_Account_Tags::getAllTags())
-            ->setCategories(Application_Model_Account_Categorys::getAllCategories())
-            ->setDate(Application_Model_Calendar_Dates::Date($dateArgs));
+
+
+        $form = new Application_Form_Transaction();
+        $form
+            ->setTags(
+                    Application_Model_Account_Tags::getAllTags()
+                    )
+            ->setCategories(
+                    Application_Model_Account_Categorys::getAllCategories()
+                    );
+
         
         
-        $this->view->form = $form;
-        
-        
-        $state = array();
-        
-        $input = new Application_Form_Transaction();
-        $input->setTags(Application_Model_Account_Tags::getAllTags())
-            ->setCategories(Application_Model_Account_Categorys::getAllCategories());
-        
-        
-        if (!$input->isValid($this->getRequest()->getParams())){
-            $state = $input->getErrors();
-        } else {
-            
-            $state = array(
-                'success'=>Application_Model_Account_Transactions::newTransaction($input->getTransaction(), $input->getDate())
-                );
+        if ($this->getRequest()->isPost() && $form->isValid($this->getRequest()->getParams())){
+
+            Application_Model_Account_Transactions::newTransaction($form->getTransaction(), $dateObj);
         }
         
-        print_r($state);
-        die;
         
+         $this->view->form = $form;
         
     }
 

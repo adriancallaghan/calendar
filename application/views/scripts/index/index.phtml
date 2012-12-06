@@ -2,7 +2,7 @@
 
 
 <h1><?php echo $this->current_date; ?></h1>
-<h2>&pound;<?php echo $this->statement->getBalance(); ?></h2>
+<h2>&pound;<?php echo number_format($this->statement->getBalance(),2); ?></h2>
         
 
 <table border="2" width="100%">
@@ -17,7 +17,7 @@
 
     <tr>
         <td><?php echo $activity->date; ?></td>
-        <td><?php echo $activity->balance; ?></td>
+        <td>&pound;<?php echo number_format($activity->balance,2); ?></td>
         <td>
             <?php if (count($activity->transactions)>0) :  ?>
                 <table border="0" cellpadding="5">
@@ -27,10 +27,16 @@
                         <th>Tags</th>
                         <th>Categories</th>
                     </tr>
+                    <tr>
+                        <td><a href='/transaction/create/<?php echo $activity->date->unix; ?>/' title='Create new transaction for <?php echo $activity->date; ?>'>Add +</a></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
                 <?php  foreach ($activity->transactions AS $transaction) : ?>
                     <tr>
                         <td><?php echo "<a href='/transaction/edit/{$transaction->id}/' title='Edit {$transaction->name}'>{$transaction->name}</a><br />"; ?></td>
-                        <td><?php echo "<a href='/transaction/edit/{$transaction->id}/' title='Edit {$transaction->name}'>&pound;{$transaction->amount}</a><br />"; ?></td>
+                        <td><?php echo "<a href='/transaction/edit/{$transaction->id}/' title='Edit {$transaction->name}'>&pound;".number_format($transaction->amount,2)."</a><br />"; ?></td>
                         <td>
                             <?php
                              if (count($transaction->tags)>0){

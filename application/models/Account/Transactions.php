@@ -242,7 +242,7 @@ class Application_Model_Account_Transactions implements Iterator {
                 array(
                     'name'=>$transaction->name,
                     'amount'=>$transaction->amount,
-                    'active'=>'1'
+                    'active'=>$transaction->active
                     )
                 );
         
