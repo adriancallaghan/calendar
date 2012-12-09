@@ -72,7 +72,35 @@ class Application_Model_Account_Transactions implements Iterator {
         return $transactionObj;
             
     }
-    
+
+    public function getCategorys(Application_Model_Account_Categorys $category){
+        
+        $allowed = array();
+        foreach($category AS $category){
+            $allowed[$category->category_id]=$category->category_name;
+        }
+        
+        foreach($this->_categories AS $transaction_id=>$_category){
+            if (!in_array($_category->category_name, $allowed)){
+                $position = array_search($transaction_id, $this->_order);
+                if ($position){
+                    unset($this->_order[$position]);
+                }
+                if (isset($this->_actives[$transaction_id])){
+                    $this->_actives[$transaction_id];
+                }
+                if (isset($this->_amounts[$transaction_id])){
+                    $this->_amounts[$transaction_id];
+                }
+                if (isset($this->_names[$transaction_id])){
+                    $this->_names[$transaction_id];
+                }
+            }
+        }
+        
+        return $this;
+    }
+
     private function addTransaction(Zend_Db_Table_Row $transaction, Application_Model_Account_Categorys $categories, Application_Model_Account_Tags $tags){
         
         $this->_order[] = $transaction->id;

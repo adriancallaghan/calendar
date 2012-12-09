@@ -12,7 +12,8 @@ class Application_Model_Account_Statement implements Iterator{
     private function __construct(array $dates){
         
         $this->rewind();
-                
+        $this->_balance = 0;
+        
         if (count($dates)>0){
             foreach ($dates AS $date){
                 $this->addDate($date);
@@ -65,6 +66,33 @@ class Application_Model_Account_Statement implements Iterator{
         return $this;
     }
     
+    public function addFilters(Application_Model_Account_Categorys $categorys = null){
+        
+        // filter
+        
+        $balance = 0;
+        $dates = array();
+        
+        if (count($this->_dates)>0){
+            foreach ($this->_dates AS $date){
+                
+                $transactions = $date->getTransactions();
+                
+                if ($categorys){
+                    $transactions->getCategorys($categorys);
+                }
+                
+                $dates[] = $date;
+                $balance += $date->balance;
+            }
+        }
+        
+        $this->_balance = $balance;
+        $this->_dates = $dates;
+        $this->rewind();
+        return $this;
+        
+    }
     
     public static function query(Application_Model_Calendar_Dates $dates, $cache = true){
         

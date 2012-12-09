@@ -24,7 +24,7 @@ class Application_Model_Account_Categorys implements Iterator{
         
         return $this->getData();
     }
-    
+       
     private function setCategory(Zend_Db_Table_Row $category){
         
         $categories = $this->getCategories();

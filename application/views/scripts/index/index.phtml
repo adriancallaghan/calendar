@@ -1,10 +1,34 @@
 
-
-
 <h1><?php echo $this->current_date; ?></h1>
 <h2>&pound;<?php echo number_format($this->statement->getBalance(),2); ?></h2>
-        
 
+<ul>
+ 
+    <?php 
+    
+    //Currently only supports one tag, and one category
+    
+    // categorys
+    if (isset($this->current_categorys->current()->category_name)){
+        $link = "/?date={$this->current_date->unix}";
+        if (isset($this->current_tags->current()->tag_id)){
+            $link.= "&tag={$this->current_tags->current()->tag_id}";
+        }
+        echo "<li>Category: {$this->current_categorys->current()->category_name} <a href='$link'>x</a></li>";
+    }
+    
+    // tags 
+    if (isset($this->current_tags->current()->tag_name)){
+        $link = "/?date={$this->current_date->unix}";
+        if (isset($this->current_categorys->current()->category_id)){
+            $link.= "&category={$this->current_categorys->current()->category_id}";
+        }
+        echo "<li>Tag: {$this->current_tags->current()->tag_name} <a href='$link'>x</a></li>";
+    }
+    ?>
+    
+</ul>
+    
 <table border="2" width="100%">
 
     <tr>
@@ -16,7 +40,11 @@
     <?php foreach ($this->statement  AS $activity) : ?>
 
     <tr>
-        <td><?php echo $activity->date; ?></td>
+        <td>
+            <a href='/?date=<?php echo $activity->date->unix; ?>' title='View <?php echo $activity->date; ?>'>
+                <?php echo $activity->date; ?>
+            </a>
+        </td>
         <td>&pound;<?php echo number_format($activity->balance,2); ?></td>
         <td>
             <?php if (count($activity->transactions)>0) :  ?>
@@ -33,7 +61,8 @@
                         <td></td>
                         <td></td>
                     </tr>
-                <?php  foreach ($activity->transactions AS $transaction) : ?>
+                <?php  
+                foreach ($activity->transactions AS $transaction) : ?>
                     <tr>
                         <td><?php echo "<a href='/transaction/edit/{$transaction->id}/' title='Edit {$transaction->name}'>{$transaction->name}</a><br />"; ?></td>
                         <td><?php echo "<a href='/transaction/edit/{$transaction->id}/' title='Edit {$transaction->name}'>&pound;".number_format($transaction->amount,2)."</a><br />"; ?></td>
@@ -41,7 +70,16 @@
                             <?php
                              if (count($transaction->tags)>0){
                                 foreach ($transaction->tags AS $tag){
-                                    echo "<a href='/tag/edit/{$tag->tag_id}' title='Edit {$tag->tag_name}'>{$tag->tag_name}</a><br />";
+                                    
+                                    // currently only supports one tag
+                                    $link = "?tag={$tag->tag_id}";
+                                    $link.= "&date={$this->current_date->unix}";
+                                    
+                                    if (isset($this->current_categorys->current()->category_id)){
+                                        $link.= "&category={$this->current_categorys->current()->category_id}";
+                                    }
+                                    
+                                    echo "<a href='$link' title='View all {$tag->tag_name}`s'>{$tag->tag_name}</a><br />";
                                 }
                             }?>
                         </td>
@@ -50,7 +88,16 @@
                             if (count($transaction->categories)>0){
 
                                 foreach ($transaction->categories AS $category){
-                                    echo "<a href='/category/edit/{$category->category_id}' title='Edit {$category->category_name}'>{$category->category_name}</a><br />";
+                                    
+                                    // currently only supports one category
+                                    $link = "?category={$category->category_id}";
+                                    $link.= "&date={$this->current_date->unix}";
+                                    
+                                    if (isset($this->current_tags->current()->tag_id)){
+                                        $link.= "&category={$this->current_tags->current()->tag_id}";
+                                    }
+                                    
+                                    echo "<a href='$link' title='View all {$category->category_name}`s'>{$category->category_name}</a><br />";
                                 }
 
                             }?>

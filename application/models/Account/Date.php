@@ -162,19 +162,25 @@ class Application_Model_Account_Date
     public static function get(Application_Model_Calendar_Date $date, $cache = true){
 
 
-        // no cache
-        if (!$cache){
-            return new Application_Model_Account_Date($date);
-        }
-        
-        
-         // Cache
-        if (!apc_exists($date->systemKey) && $cache) {
-            $dateObj = new Application_Model_Account_Date($date);
-            $dateObj->cache();
-        }
 
-        return apc_fetch($date->systemKey);
+        if ($cache && apc_exists($date->systemKey)){
+            
+            $dateObj = apc_fetch($date->systemKey);
+            
+        } else {
+
+            $dateObj = new Application_Model_Account_Date($date);
+            
+            if ($cache){
+                $dateObj->cache();
+            }
+            
+        }
+        
+        
+        
+        
+        return $dateObj;
 
     }
        
