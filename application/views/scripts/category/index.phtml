@@ -1,1 +1,18 @@
 Category
+
+
+    <?php 
+    
+    //Currently only supports one tag, and one category
+    
+    // categorys
+    if (isset($this->current_categorys->current()->category_name)){
+        $link = "/?date={$this->current_date->unix}";
+        if (isset($this->current_tags->current()->tag_id)){
+            $link.= "&tag={$this->current_tags->current()->tag_id}";
+        }
+        echo "<li>Category: {$this->current_categorys->current()->category_name} <a href='$link'>x</a></li>";
+    }
+    
+
+    ?>

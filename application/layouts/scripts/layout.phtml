@@ -1,1 +1,19 @@
-<?php echo $this->layout()->content; ?>
+<?php echo $this->doctype() ?>
+<html>
+    <head>
+        <?php echo $this->headTitle(); ?>
+        <?php echo $this->headMeta(); ?>
+        <?php echo $this->headScript(); ?>
+        <?php echo $this->headLink(); ?>
+    </head>
+    <body>
+        <ul class="menu">
+            <li><a href="/" title="home">Home</a></li>
+            <li><a href="/category/" title="Categories">Categories</a></li>
+            <li><a href="/tag/" title="Tags">Tags</a></li>
+        </ul>
+        <div class="content">
+            <?php echo $this->layout()->content; ?>
+        </div>
+    </body>
+</html>

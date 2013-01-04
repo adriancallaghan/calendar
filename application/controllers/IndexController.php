@@ -6,6 +6,16 @@ class IndexController extends Zend_Controller_Action
     public function init()
     {
         /* Initialize action controller here */
+        $this->view->headScript()->appendFile('/assets/js/js.js','text/javascript');
+        $this->view->headLink()->appendStylesheet('/assets/css/style.css');
+        $this->view->headMeta()
+            ->appendName('keywords', 'Calendar, Tags, Categories')
+            ->appendHttpEquiv('expires','Wed, 26 Feb 1997 08:21:57 GMT')
+            ->appendHttpEquiv('pragma', 'no-cache')
+            ->appendHttpEquiv('Cache-Control', 'no-cache')
+            ->appendHttpEquiv('Content-Type','text/html; charset=UTF-8')
+            ->appendHttpEquiv('Content-Language', 'en-UK');
+        $this->view->headTitle('Calendar');
     }
 
     public function indexAction()
@@ -25,11 +35,6 @@ class IndexController extends Zend_Controller_Action
         // todays date, or requested date
         $curr_date = Application_Model_Calendar_Dates::Date(array('unix'=>$this->getRequest()->getParam('date')));
         
-        // category
-        $curr_categorys = Application_Model_Account_Categorys::getCategoriesByIds($this->getRequest()->getParam('category'));
-
-        // tag
-        $curr_tags = Application_Model_Account_Tags::getTagsByIds($this->getRequest()->getParam('tag'));
         
         // get period of dates
         $dates = Application_Model_Calendar_Dates::query(
@@ -40,17 +45,11 @@ class IndexController extends Zend_Controller_Action
         
         // statement
         $statement = Application_Model_Account_Statement::query($dates, false);
-        $statement->addFilters($curr_categorys);
         $this->view->statement = $statement;
  
         // current date
         $this->view->current_date = $curr_date;
         
-        // current category
-        $this->view->current_categorys = $curr_categorys;
-        
-        // current tag
-        $this->view->current_tags = $curr_tags;
         
     }
 

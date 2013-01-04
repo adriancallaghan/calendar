@@ -2,32 +2,6 @@
 <h1><?php echo $this->current_date; ?></h1>
 <h2>&pound;<?php echo number_format($this->statement->getBalance(),2); ?></h2>
 
-<ul>
- 
-    <?php 
-    
-    //Currently only supports one tag, and one category
-    
-    // categorys
-    if (isset($this->current_categorys->current()->category_name)){
-        $link = "/?date={$this->current_date->unix}";
-        if (isset($this->current_tags->current()->tag_id)){
-            $link.= "&tag={$this->current_tags->current()->tag_id}";
-        }
-        echo "<li>Category: {$this->current_categorys->current()->category_name} <a href='$link'>x</a></li>";
-    }
-    
-    // tags 
-    if (isset($this->current_tags->current()->tag_name)){
-        $link = "/?date={$this->current_date->unix}";
-        if (isset($this->current_categorys->current()->category_id)){
-            $link.= "&category={$this->current_categorys->current()->category_id}";
-        }
-        echo "<li>Tag: {$this->current_tags->current()->tag_name} <a href='$link'>x</a></li>";
-    }
-    ?>
-    
-</ul>
     
 <table border="2" width="100%">
 
@@ -67,40 +41,26 @@
                         <td><?php echo "<a href='/transaction/edit/{$transaction->id}/' title='Edit {$transaction->name}'>{$transaction->name}</a><br />"; ?></td>
                         <td><?php echo "<a href='/transaction/edit/{$transaction->id}/' title='Edit {$transaction->name}'>&pound;".number_format($transaction->amount,2)."</a><br />"; ?></td>
                         <td>
-                            <?php
-                             if (count($transaction->tags)>0){
-                                foreach ($transaction->tags AS $tag){
-                                    
-                                    // currently only supports one tag
-                                    $link = "?tag={$tag->tag_id}";
-                                    $link.= "&date={$this->current_date->unix}";
-                                    
-                                    if (isset($this->current_categorys->current()->category_id)){
-                                        $link.= "&category={$this->current_categorys->current()->category_id}";
+                            <ul class="tag_list">
+                                <?php
+                                 if (count($transaction->tags)>0){
+                                    foreach ($transaction->tags AS $tag){
+                                        echo "<li><a href='/tag/' title='View tag statement'>{$tag->tag_name}</a></li>";
                                     }
-                                    
-                                    echo "<a href='$link' title='View all {$tag->tag_name}`s'>{$tag->tag_name}</a><br />";
-                                }
-                            }?>
+                                }?>
+                            </ul>
                         </td>
                         <td>
+                            <ul class="category_list">
                             <?php
                             if (count($transaction->categories)>0){
 
                                 foreach ($transaction->categories AS $category){
-                                    
-                                    // currently only supports one category
-                                    $link = "?category={$category->category_id}";
-                                    $link.= "&date={$this->current_date->unix}";
-                                    
-                                    if (isset($this->current_tags->current()->tag_id)){
-                                        $link.= "&category={$this->current_tags->current()->tag_id}";
-                                    }
-                                    
-                                    echo "<a href='$link' title='View all {$category->category_name}`s'>{$category->category_name}</a><br />";
+                                    echo "<li><a href='/category/' title='View categories statement'>{$category->category_name}</a></li>";
                                 }
 
                             }?>
+                            </ul>
                         </td>
                     </tr>
             <?php endforeach; ?>

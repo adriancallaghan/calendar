@@ -24,7 +24,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
                             )
                     )
          );
-        
+        /*
         $router->addRoute('tags', 
             new Zend_Controller_Router_Route(
                     '/tags/:action/:arg1/:arg2/',
@@ -47,7 +47,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
                             'arg2'       => ':arg2'
                             )
                     )
-         );
+         );*/
     }
     
 }

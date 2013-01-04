@@ -25,6 +25,7 @@ class Application_Model_Account_Tags implements Iterator{
         return $this->getData();
     }
         
+    
     private function setTag(Zend_Db_Table_Row $tag){
         
         $tags = $this->getTags();
@@ -109,6 +110,7 @@ class Application_Model_Account_Tags implements Iterator{
         
         return $thisObj;
     }
+ 
     
     public static function setTagsByTransactionId($transactionId, Application_Model_Account_Tags $tags){
         
