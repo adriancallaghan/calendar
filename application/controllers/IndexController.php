@@ -7,6 +7,7 @@ class IndexController extends Zend_Controller_Action
     {
         /* Initialize action controller here */
         $this->view->headScript()->appendFile('/assets/js/js.js','text/javascript');
+        $this->view->headLink()->appendStylesheet('/assets/css/reset.css');
         $this->view->headLink()->appendStylesheet('/assets/css/style.css');
         $this->view->headMeta()
             ->appendName('keywords', 'Calendar, Tags, Categories')

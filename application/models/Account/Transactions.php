@@ -106,7 +106,7 @@ class Application_Model_Account_Transactions implements Iterator {
         
     }
     
-    public static function fetchByTransactionIds(array $transactionIds, $onlyActive = true){
+    public static function fetchByTransactionIds(array $transactionIds){
         
         /*
          * returns this object, with a collection of transactions within it
@@ -122,7 +122,7 @@ class Application_Model_Account_Transactions implements Iterator {
 
                 $transactionDetails = $transactionIdObj->fetchTransaction($transactionId);
                 
-                if ($transactionDetails && (!$onlyActive || $transactionDetails->active)){
+                if ($transactionDetails){
                     $categories = Application_Model_Account_Categorys::getCategoriesByTransactionId($transactionId);
                     $tags = Application_Model_Account_Tags::getTagsByTransactionId($transactionId);
                     $thisObj->addTransaction($transactionDetails, $categories, $tags);

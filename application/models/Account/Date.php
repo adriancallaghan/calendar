@@ -103,13 +103,15 @@ class Application_Model_Account_Date
     }
 
     
-    private function setBalance(){
+    private function setBalance($activeOnly = true){
         
         $this->_balance = 0;
         
         if (count($this->transactions)>0){
             foreach ($this->transactions AS $transaction){
-                $this->_balance += $transaction->amount;
+                if (!$activeOnly || $transaction->active){
+                    $this->_balance += $transaction->amount;
+                }
             }
         }
 

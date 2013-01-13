@@ -3,7 +3,7 @@
 <h2>&pound;<?php echo number_format($this->statement->getBalance(),2); ?></h2>
 
     
-<table border="2" width="100%">
+<table>
 
     <tr>
         <th>Date</th>
@@ -22,7 +22,7 @@
         <td>&pound;<?php echo number_format($activity->balance,2); ?></td>
         <td>
             <?php if (count($activity->transactions)>0) :  ?>
-                <table border="0" cellpadding="5">
+                <table>
                     <tr>
                         <th>Name</th>
                         <th>Amount</th>
@@ -37,7 +37,7 @@
                     </tr>
                 <?php  
                 foreach ($activity->transactions AS $transaction) : ?>
-                    <tr>
+                    <tr class="<?php echo $transaction->active ? 'active' : 'inactive'; ?>">
                         <td><?php echo "<a href='/transaction/edit/{$transaction->id}/' title='Edit {$transaction->name}'>{$transaction->name}</a><br />"; ?></td>
                         <td><?php echo "<a href='/transaction/edit/{$transaction->id}/' title='Edit {$transaction->name}'>&pound;".number_format($transaction->amount,2)."</a><br />"; ?></td>
                         <td>
