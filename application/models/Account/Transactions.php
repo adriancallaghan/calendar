@@ -5,7 +5,6 @@ class Application_Model_Account_Transactions implements Iterator {
     protected $_actives;
     protected $_names;
     protected $_amounts;
-    protected $_categories;
     protected $_tags;   
     
     protected $_position;
@@ -67,20 +66,18 @@ class Application_Model_Account_Transactions implements Iterator {
         $transactionObj->amount = $this->_amounts[$transId];
         $transactionObj->name = $this->_names[$transId];
         $transactionObj->tags = $this->_tags[$transId];
-        $transactionObj->categories = $this->_categories[$transId];
 
         return $transactionObj;
             
     }
 
 
-    private function addTransaction(Zend_Db_Table_Row $transaction, Application_Model_Account_Categorys $categories, Application_Model_Account_Tags $tags){
+    private function addTransaction(Zend_Db_Table_Row $transaction, Application_Model_Account_Tags $tags){
         
         $this->_order[] = $transaction->id;
         $this->_actives[$transaction->id] = $transaction->active;
         $this->_amounts[$transaction->id] = (float) $transaction->amount;
         $this->_names[$transaction->id] = (string) $transaction->name;
-        $this->_categories[$transaction->id] = $categories;
         $this->_tags[$transaction->id] = $tags;
 
         return $this;
@@ -123,9 +120,8 @@ class Application_Model_Account_Transactions implements Iterator {
                 $transactionDetails = $transactionIdObj->fetchTransaction($transactionId);
                 
                 if ($transactionDetails){
-                    $categories = Application_Model_Account_Categorys::getCategoriesByTransactionId($transactionId);
                     $tags = Application_Model_Account_Tags::getTagsByTransactionId($transactionId);
-                    $thisObj->addTransaction($transactionDetails, $categories, $tags);
+                    $thisObj->addTransaction($transactionDetails, $tags);
                 }
             }
             
@@ -155,8 +151,7 @@ class Application_Model_Account_Transactions implements Iterator {
                         'amount'=>$transactionDetails->amount,
                         'id'=>$transactionDetails->id,
                         'active'=>$transactionDetails->active,
-                        'tags'=>Application_Model_Account_Tags::getTagsByTransactionId($transactionDetails->id),
-                        'categories'=>Application_Model_Account_Categorys::getCategoriesByTransactionId($transactionDetails->id)
+                        'tags'=>Application_Model_Account_Tags::getTagsByTransactionId($transactionDetails->id)
                     )
                 );
 
@@ -191,13 +186,10 @@ class Application_Model_Account_Transactions implements Iterator {
         
         
         /*
-         * Add tags and categories etc
+         * Add tags
          */
         if ($transaction->tags){
             Application_Model_Account_Tags::setTagsByTransactionId($transaction->id, $transaction->tags);
-        }
-        if ($transaction->categories){
-            Application_Model_Account_Categorys::setCategoriesByTransactionId($transaction->id, $transaction->categories);
         }
         
         return true;
@@ -251,13 +243,10 @@ class Application_Model_Account_Transactions implements Iterator {
         $dateTaxObj->insert(array('transaction_id'=>$transactionId,'date_id'=>$dateKey));
         
         /*
-         * Add tags and categories etc
+         * Add tags
          */
         if ($transaction->tags){
             Application_Model_Account_Tags::setTagsByTransactionId($transactionId, $transaction->tags);
-        }
-        if ($transaction->categories){
-            Application_Model_Account_Categorys::setCategoriesByTransactionId($transactionId, $transaction->categories);
         }
         
         return true;

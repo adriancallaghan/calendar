@@ -163,8 +163,6 @@ class Application_Model_Account_Date
         
     public static function get(Application_Model_Calendar_Date $date, $cache = true){
 
-
-
         if ($cache && apc_exists($date->systemKey)){
             
             $dateObj = apc_fetch($date->systemKey);
@@ -178,9 +176,6 @@ class Application_Model_Account_Date
             }
             
         }
-        
-        
-        
         
         return $dateObj;
 

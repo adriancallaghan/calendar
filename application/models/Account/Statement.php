@@ -7,6 +7,7 @@ class Application_Model_Account_Statement implements Iterator{
     protected $_position;
     protected $_dates;
     protected $_balance;
+    protected $_balances; // running total
     
     
     private function __construct(array $dates){
@@ -40,6 +41,16 @@ class Application_Model_Account_Statement implements Iterator{
 
     public function key() {
 
+        /*
+         * The balance on this day is returned as the key
+         * 
+         * if a problem is encountered the key is returned
+         */
+        
+        if (isset($this->_balances[$this->current()->getId()])){
+            return $this->_balances[$this->current()->getId()];
+        }
+        
         return $this->_position;
     }
 
@@ -53,16 +64,24 @@ class Application_Model_Account_Statement implements Iterator{
         return isset($this->_dates[$this->_position]);
     }
     
-    public function getBalance(){
+    public function getBalance(Application_Model_Account_Date $date = null){
+        /*
+         * returns the balance on a given day, or the overall balance
+         */
+        if ($date==null){
+            return $this->_balance;
+        }
         
-        return $this->_balance;
+        if (isset($this->_balances[$date->getId()])){
+            return $this->_balances[$date->getId()];
+        }
     }
     
     private function addDate(Application_Model_Account_Date $date){
     
         $this->_dates[] = $date;
         $this->_balance += $date->balance;
-        
+        $this->_balances[$date->getId()] = $this->_balance;
         return $this;
     }
     

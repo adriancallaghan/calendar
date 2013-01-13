@@ -14,7 +14,7 @@ class Application_Model_Account_Tags implements Iterator{
     
  
     public function setTags(array $tags){
-        
+
         $this->setData($tags);
         return $this;
         
@@ -26,89 +26,73 @@ class Application_Model_Account_Tags implements Iterator{
     }
         
     
-    private function setTag(Zend_Db_Table_Row $tag){
-        
-        $tags = $this->getTags();
-        $tags[] = $tag;
-        $this->setTags($tags);
-        
-        return $this;
-    }
     
-    public static function getAllTags(){
-
-        $tagObj = new Application_Model_DbTable_Tags();
-        $thisObj = new Application_Model_Account_Tags();
+    public static function fetchAll(array $where = null,$count = 50, $offset = 0){
         
+        
+        $tagsInstance = new self; 
 
-        $tags = $tagObj->fetchAll();
-        if ($tags){
-            foreach ($tags AS $tag){
-
-                $thisObj->setTag($tag);
-
+        
+        $db = Zend_Db_Table::getDefaultAdapter();
+        
+        $select = $db->select()
+             ->from(array('tags' => 'tags'),array()) 
+             ->join(array('categories' => 'categories'),'tags.tag_id = categories.category_id',array('category_name')) 
+             ->order(array('tag_id DESC'))
+             ->limit($count, $offset);
+        
+        if ($where!==null){
+            foreach($where AS $clause=>$parameter){
+                $select->where($clause,$parameter);
             }
         }
-         
-        return $thisObj;
+        
+
+        $rowSet = $db->fetchAll($select);
+        $tagsInstance->setTags($rowSet);
+
+        return $tagsInstance;        
+        
     }
     
     public static function getTagsByNames($tagNames = null){
         
-        $tagsObj = new Application_Model_DbTable_Tags();
-        $thisObj = new Application_Model_Account_Tags();
-        
-        $tags = $tagsObj->fetchTags($tagNames);
-        
-        if ($tags){
-            foreach ($tags AS $tag){
-                $thisObj->setTag($tag);
-            }
-        }
-            
-        return $thisObj;
+        return self::fetchAll(array('tag_name IN ?'=>$tagNames));
         
     }
 
     public static function getTagsByIds($tagIds = null){
         
-        $tagsObj = new Application_Model_DbTable_Tags();
-        $thisObj = new Application_Model_Account_Tags();
-        
-        $tags = $tagsObj->fetchTagsById($tagIds);
-        
-        if ($tags){
-            foreach ($tags AS $tag){
-                $thisObj->setTag($tag);
-            }
-        }
-            
-        return $thisObj;
+        return self::fetchAll(array('tag_id IN ?'=>$tagIds));
         
     }
     
     public static function getTagsByTransactionId($transactionId){
-        
-        $tagTaxObj = new Application_Model_DbTable_TagTaxonomy();
-        $tagObj = new Application_Model_DbTable_Tags();
-        $thisObj = new Application_Model_Account_Tags();
-        
-        $taxonomyIds = $tagTaxObj->fetchTagIdsByTransactionId($transactionId);
-        
-        if (count($taxonomyIds)>0){
 
-            $tags = $tagObj->fetchTagsById($taxonomyIds);
-            if ($tags){
-                foreach ($tags AS $tag){
-                    
-                    $thisObj->setTag($tag);
-                    
-                }
-            }
-            
-        }
+       /*
+        * SELECT * FROM tag_taxonomy 
+            INNER JOIN `tags` ON tag_taxonomy.tag_id = tags.tag_id 
+            INNER JOIN `categories` ON tags.tag_id = categories.category_id
+            WHERE transaction_id=5;
+        */
         
-        return $thisObj;
+        $tagsInstance = new self; 
+
+        $db = Zend_Db_Table::getDefaultAdapter();
+        
+        $select = $db->select()
+             ->from(array('tag_taxonomy' => 'tag_taxonomy')) 
+             ->joinLeft(array('tags' => 'tags'),'tag_taxonomy.tag_id = tags.tag_id') 
+             ->joinLeft(array('categories' => 'categories'),'tags.tag_id = categories.category_id') 
+             ->where('tag_taxonomy.transaction_id = ?',$transactionId)
+             ->order(array('tags.tag_id DESC'));
+        
+        
+        $rowSet = $db->fetchAll($select);
+
+        $tagsInstance->setTags($rowSet);
+        
+        return $tagsInstance;
     }
  
     

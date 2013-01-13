@@ -8,10 +8,11 @@
     <tr>
         <th>Date</th>
         <th>Total Amount</th>
-        <th>Total Transactions</th>
+        <th>Subtotal</th>
+        <th>Transactions</th>
     </tr>
     
-    <?php foreach ($this->statement  AS $activity) : ?>
+    <?php foreach ($this->statement  AS $subTotal=>$activity) : ?>
 
     <tr>
         <td>
@@ -20,6 +21,7 @@
             </a>
         </td>
         <td>&pound;<?php echo number_format($activity->balance,2); ?></td>
+        <td>&pound;<?php echo number_format($subTotal,2); ?></td>
         <td>
             <?php if (count($activity->transactions)>0) :  ?>
                 <table>
@@ -27,11 +29,9 @@
                         <th>Name</th>
                         <th>Amount</th>
                         <th>Tags</th>
-                        <th>Categories</th>
                     </tr>
                     <tr>
                         <td><a href='/transaction/create/<?php echo $activity->date->unix; ?>/' title='Create new transaction for <?php echo $activity->date; ?>'>Add +</a></td>
-                        <td></td>
                         <td></td>
                         <td></td>
                     </tr>
@@ -45,21 +45,10 @@
                                 <?php
                                  if (count($transaction->tags)>0){
                                     foreach ($transaction->tags AS $tag){
-                                        echo "<li><a href='/tag/' title='View tag statement'>{$tag->tag_name}</a></li>";
+                                        echo "<li><a href='/category/show/group/{$tag['category_id']}' title='View category statement'>{$tag['tag_name']} ({$tag['category_name']})</a></li>";
                                     }
+                                    
                                 }?>
-                            </ul>
-                        </td>
-                        <td>
-                            <ul class="category_list">
-                            <?php
-                            if (count($transaction->categories)>0){
-
-                                foreach ($transaction->categories AS $category){
-                                    echo "<li><a href='/category/' title='View categories statement'>{$category->category_name}</a></li>";
-                                }
-
-                            }?>
                             </ul>
                         </td>
                     </tr>

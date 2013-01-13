@@ -21,22 +21,20 @@ class CategoryController extends Zend_Controller_Action
     public function indexAction()
     {
                
-                // category
-        $curr_categorys = Application_Model_Account_Categorys::getCategoriesByIds($this->getRequest()->getParam('category'));
-   
+        $this->forward('show');
+        return;
         
     }
 
-    public function editAction()
-    {
-        // action body
-    }
 
-    public function createAction()
-    {
-        // action body
+    public function showAction(){
+        
+        // category
+        $group = $this->getRequest()->getParam('group');
+        $where = $group=='' ? null : array('category_id = ?'=>$group);
+        $tags = Application_Model_Account_Tags::fetchAll();
+        $this->view->tags = $tags;
     }
-
 
 }
 
